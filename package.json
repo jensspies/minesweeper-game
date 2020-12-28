@@ -22,9 +22,11 @@
     "@rollup/plugin-typescript": "^6.0.0",
     "typescript": "^3.9.3",
     "tslib": "^2.0.0",
-    "@tsconfig/svelte": "^1.0.0"
+    "@tsconfig/svelte": "^1.0.0",
+    "@types/node": "^14.14.16"
   },
   "dependencies": {
+    "@types/ws": "^7.4.0",
     "prettier-eslint": "^12.0.0",
     "sirv-cli": "^1.0.0"
   },

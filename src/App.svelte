@@ -1,60 +1,76 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 
 	import Heading from './components/header.svelte';
-	import {onMount} from 'svelte';
-	
+
+	import { myWebsocketId, messageQueue } from './store';
+	import { WebSocketHandler } from './classes/webSocketHandler';
+
 	const apiUrl = 'http://localhost:3000';
-	let socket;
+	let socket: WebSocketHandler;
 	let myId = '';
 	let latestAnswer = 'Initial';
+	let currentGameId = -1;
 
 	onMount(() => {
-		socket = new WebSocket('ws:localhost:8181');
-		socket.addEventListener('open', function (event){
-			if (event.data) {
-				myId = event.data.welcome;
-			}
+		socket = new WebSocketHandler('ws:localhost:8181');
+		const myIdSubscription = myWebsocketId.subscribe((value) => {
+			myId = value;
 		});
 
-		socket.addEventListener('message', function (event){
-			console.log(event);
-			let data;
-			try {
-				data = JSON.parse(event.data);
-			} catch (exc) {
-				console.log('no JSON data given!!')
-				
-			}
-			if (data.welcome) {
-				myId = data.welcome;
-			} else {
-				latestAnswer = data.message;
-			}
+		const messageSubscription = messageQueue.subscribe(value => {
+			console.log(value);
 		});
+
 	});
 	async function startGame(){
-		const url = apiUrl + '/start/' + myId + '/4';
-		await fetch(url, {mode: 'no-cors'})
+		const url = apiUrl + '/start/' + myId + '/fullMatrixAdvanced';
+
+		await fetch(encodeURI(url), {mode: 'cors'})
 			.then((response) => {
-				;
+				return response.text();
+			})
+			.then(function(json) {
+				const data = JSON.parse(json);
+				currentGameId = data.gameId;
+				console.log('my created game is: ' + currentGameId);
 			});
 
 	}
 
 	async function subscribeGame() {
 		const url = apiUrl + '/subscribeGame/' + myId + '/4';
-		await fetch(url, {mode: 'no-cors'})
+		await fetch(encodeURI(url), {mode: 'cors'})
 			.then((response) => {
-				;
+				return response.text();
+			})
+			.then(function(json) {
+				console.log(JSON.parse(json));
 			});
 	}
 
 	async function updateGame() {
-		const url = apiUrl + '/gameUpdate/4';
-		await fetch(url, {mode: 'no-cors'})
+		const url = apiUrl + '/gameUpdate/' + currentGameId;
+		await fetch(encodeURI(url), {mode: 'cors'})
 			.then((response) => {
-				;
+				return response.text();
+			})
+			.then(function(json) {
+				messageQueue.add(json);
 			});
+
+	}
+
+	async function getGameTypes() {
+		const url = apiUrl + '/gameTypes';
+		await fetch(encodeURI(url), {mode: 'cors'})
+			.then((response) => {
+				return response.json();
+			})
+			.then(function(json) {
+				messageQueue.add(json);
+			});
+
 	}
 
 	export let name: string;
@@ -68,6 +84,8 @@
 	<button on:click={startGame}>startGame</button>
 	<button on:click={subscribeGame}>Subscribe</button>
 	<button on:click={updateGame}>update</button>
+	<button on:click={getGameTypes}>gameTypes</button>
+
 	<div>
 		<textarea id="updates" rows="10" cols="60">
 			{latestAnswer}
