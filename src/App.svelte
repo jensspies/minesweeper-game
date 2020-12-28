@@ -19,7 +19,9 @@
 		});
 
 		const messageSubscription = messageQueue.subscribe(value => {
-			console.log(value);
+			if (value) {
+				console.log(value);
+			}
 		});
 
 	});
