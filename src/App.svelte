@@ -6,9 +6,11 @@
 	import { myWebsocketId, chatMessageQueue } from './store';
 	import { WebSocketHandler } from './classes/webSocketHandler';
 	import { MessageParser } from './classes/messageParser';
+	import { WebServiceWrapper } from './classes/webServiceWrapper';
 
 	const apiUrl = 'http://localhost:3000';
 	let socket: WebSocketHandler;
+	let webApiWrapper: WebServiceWrapper;
 	let messageParser = new MessageParser();
 	let myId = '';
 	let latestAnswer = 'Initial';
@@ -16,6 +18,7 @@
 
 	onMount(() => {
 		socket = new WebSocketHandler('ws:localhost:8181');
+		webApiWrapper = new WebServiceWrapper(apiUrl);
 		const myIdSubscription = myWebsocketId.subscribe((value) => {
 			myId = value;
 		});
@@ -28,53 +31,19 @@
 	});
 
 	async function startGame(){
-		const url = apiUrl + '/start/' + myId + '/fullMatrixAdvanced';
-
-		await fetch(encodeURI(url), {mode: 'cors'})
-			.then((response) => {
-				return response.text();
-			})
-			.then(function(json) {
-				const data = JSON.parse(json);
-				currentGameId = data.gameId;
-				console.log('my created game is: ' + currentGameId);
-			});
-
+		webApiWrapper.startGame(myId, 'fullMatrixAdvanced');
 	}
 
 	async function subscribeGame() {
-		const url = apiUrl + '/subscribeGame/' + myId + '/4';
-		await fetch(encodeURI(url), {mode: 'cors'})
-			.then((response) => {
-				return response.text();
-			})
-			.then(function(json) {
-				console.log(JSON.parse(json));
-			});
+		webApiWrapper.subscribeGame(myId, 4);
 	}
 
 	async function updateGame() {
-		const url = apiUrl + '/gameUpdate/' + currentGameId;
-		await fetch(encodeURI(url), {mode: 'cors'})
-			.then((response) => {
-				return response.text();
-			})
-			.then(function(json) {
-				messageParser.parse(json)
-			});
-
+		webApiWrapper.updateGame(currentGameId);
 	}
 
 	async function getGameTypes() {
-		const url = apiUrl + '/gameTypes';
-		await fetch(encodeURI(url), {mode: 'cors'})
-			.then((response) => {
-				return response.json();
-			})
-			.then(function(json) {
-				messageParser.parse(json);
-			});
-
+		webApiWrapper.getGameTypes();
 	}
 
 	export let name: string;

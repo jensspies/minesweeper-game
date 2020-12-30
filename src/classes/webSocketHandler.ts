@@ -1,4 +1,3 @@
-import { myWebsocketId, chatMessageQueue } from '../store';
 import { MessageParser } from './messageParser';
 
 export class WebSocketHandler {
