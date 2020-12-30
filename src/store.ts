@@ -1,8 +1,10 @@
-import { writable } from 'svelte/store';
+import { createFiFoMessageQueue, createFiFoStringQueue } from './modules/fiFoQueueStore';
+import { createIdStore } from './modules/myIdStore';
 
-import { createFiFoQueue } from './modules/fiFoQueue';
+export const myWebsocketId = createIdStore();
 
-export const myWebsocketId = writable('');
+export const chatMessageQueue = createFiFoMessageQueue();
 
-export const messageQueue = createFiFoQueue();
+export const gameUpdateMessageQueue = createFiFoStringQueue();
 
+// TODO: Define different stores for message types to be defined)

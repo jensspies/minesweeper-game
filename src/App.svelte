@@ -3,11 +3,13 @@
 
 	import Heading from './components/header.svelte';
 
-	import { myWebsocketId, messageQueue } from './store';
+	import { myWebsocketId, chatMessageQueue } from './store';
 	import { WebSocketHandler } from './classes/webSocketHandler';
+	import { MessageParser } from './classes/messageParser';
 
 	const apiUrl = 'http://localhost:3000';
 	let socket: WebSocketHandler;
+	let messageParser = new MessageParser();
 	let myId = '';
 	let latestAnswer = 'Initial';
 	let currentGameId = -1;
@@ -18,13 +20,13 @@
 			myId = value;
 		});
 
-		const messageSubscription = messageQueue.subscribe(value => {
+		const messageSubscription = chatMessageQueue.subscribe(value => {
 			if (value) {
 				console.log(value);
 			}
 		});
-
 	});
+
 	async function startGame(){
 		const url = apiUrl + '/start/' + myId + '/fullMatrixAdvanced';
 
@@ -58,7 +60,7 @@
 				return response.text();
 			})
 			.then(function(json) {
-				messageQueue.add(json);
+				messageParser.parse(json)
 			});
 
 	}
@@ -70,7 +72,7 @@
 				return response.json();
 			})
 			.then(function(json) {
-				messageQueue.add(json);
+				messageParser.parse(json);
 			});
 
 	}

@@ -1,11 +1,14 @@
-import { myWebsocketId, messageQueue } from '../store';
+import { myWebsocketId, chatMessageQueue } from '../store';
+import { MessageParser } from './messageParser';
 
 export class WebSocketHandler {
     private webSocket: WebSocket;
-
+    private messageParser: MessageParser;
     constructor(serverUrl: string) {
         this.webSocket = new WebSocket(serverUrl);
+        this.messageParser = new MessageParser();
         this._registerEvents();
+
     };
 
     private _registerEvents() {
@@ -15,13 +18,10 @@ export class WebSocketHandler {
 			try {
 				data = JSON.parse(event.data);
 			} catch (exc) {
-				console.log('no JSON data given!!')
-            } 
-            if (data.welcome) {
-                myWebsocketId.set(data.welcome);
-            } else {
-				messageQueue.add(data.message);
-			}
+                console.log('no JSON data given!!')
+                data.message = event.data;
+            }
+            socketHandler.messageParser.parse(data);
 		});
     }
 }
