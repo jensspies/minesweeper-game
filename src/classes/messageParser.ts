@@ -1,6 +1,8 @@
-import { myWebsocketId, chatMessageQueue } from '../store';
+import { myWebsocketId, chatMessageQueue, myCurrentGameId } from '../store';
 import { getMessageTypes, Message, MessageType } from './message';
 import { ChatMessage } from './messages/chatMessage';
+import { GameIdMessage } from './messages/gameId';
+import { GameStatusMessage } from './messages/gameStatus';
 import { GameTypesMessage } from './messages/gameTypes';
 import { WelcomeMessage } from './messages/welcome';
 
@@ -23,7 +25,13 @@ export class MessageParser {
                 case MessageType.GameTypes:
                     console.log(message);
                     break;
-            }
+                case MessageType.GameId:
+                    myCurrentGameId.init(message);
+                    break;
+                case MessageType.GameStatus:
+                    console.log(message);
+                    break;
+                }
 
         } else if (data != '') {
             console.log('MessageType not registered:');
@@ -46,6 +54,13 @@ export class MessageParser {
         }
         if (data.type && data.type === 'GameTypes') {
             foundMessage = new GameTypesMessage(data);
+        }
+        if (data.gameId && !data.timestamp) {
+            foundMessage = new GameIdMessage(data);
+        }
+
+        if (data.gameId && data.timestamp) {
+            foundMessage = new GameStatusMessage(data);
         }
         return foundMessage;
     }

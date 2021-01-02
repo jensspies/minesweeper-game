@@ -2,6 +2,8 @@ export enum MessageType {
     WelcomeMessage = 'WelcomeMessage'
     , ChatMessage = 'ChatMessage'
     , GameTypes = 'GameTypes'
+    , GameId = 'GameId'
+    , GameStatus = 'GameStatus'
 }
 
 export const getMessageTypes = function (): MessageType[] {

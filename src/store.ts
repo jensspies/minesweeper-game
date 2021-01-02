@@ -1,7 +1,9 @@
 import { createFiFoMessageQueue, createFiFoStringQueue } from './modules/fiFoQueueStore';
-import { createIdStore } from './modules/myIdStore';
+import { createIdStore, createStringIdStore } from './modules/myIdStore';
 
-export const myWebsocketId = createIdStore();
+export const myWebsocketId = createStringIdStore();
+
+export const myCurrentGameId = createIdStore();
 
 export const chatMessageQueue = createFiFoMessageQueue();
 

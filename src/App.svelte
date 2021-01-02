@@ -3,24 +3,28 @@
 
 	import Heading from './components/header.svelte';
 
-	import { myWebsocketId, chatMessageQueue } from './store';
+	import { myWebsocketId, chatMessageQueue, myCurrentGameId } from './store';
 	import { WebSocketHandler } from './classes/webSocketHandler';
-	import { MessageParser } from './classes/messageParser';
 	import { WebServiceWrapper } from './classes/webServiceWrapper';
 
+	//const apiUrl = 'http://192.168.178.47:3001';
 	const apiUrl = 'http://localhost:3000';
+	const websocketServerUrl = 'ws:localhost:8181';
 	let socket: WebSocketHandler;
 	let webApiWrapper: WebServiceWrapper;
-	let messageParser = new MessageParser();
 	let myId = '';
 	let latestAnswer = 'Initial';
-	let currentGameId = -1;
+	let currentGameId = 3;
 
 	onMount(() => {
-		socket = new WebSocketHandler('ws:localhost:8181');
+		socket = new WebSocketHandler(websocketServerUrl);
 		webApiWrapper = new WebServiceWrapper(apiUrl);
 		const myIdSubscription = myWebsocketId.subscribe((value) => {
 			myId = value;
+		});
+
+		const myCurrentGameIdSubscription = myCurrentGameId.subscribe((value) => {
+			currentGameId = parseInt(value);
 		});
 
 		const messageSubscription = chatMessageQueue.subscribe(value => {
