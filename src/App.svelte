@@ -7,9 +7,19 @@
 	import { WebSocketHandler } from './classes/webSocketHandler';
 	import { WebServiceWrapper } from './classes/webServiceWrapper';
 
-	//const apiUrl = 'http://192.168.178.47:3001';
+	/*
 	const apiUrl = 'http://localhost:3000';
 	const websocketServerUrl = 'ws:localhost:8181';
+	//*/
+	///*
+	const apiUrl = 'http://192.168.178.47:3000';
+	const websocketServerUrl = 'ws:192.168.178.47:8181';
+	//*/
+	/*
+	const apiUrl = 'http://15521a8c09d1.ngrok.io';
+	const websocketServerUrl = 'ws://e5711e9d3448.ngrok.io';
+	//*/
+
 	let socket: WebSocketHandler;
 	let webApiWrapper: WebServiceWrapper;
 	let myId = '';
@@ -35,19 +45,34 @@
 	});
 
 	async function startGame(){
-		webApiWrapper.startGame(myId, 'fullMatrixAdvanced');
+		//const layouts = Array('fullMatrixBeginner', 'fullMatrixAdvanced', 'fullMatrixExpert', 'dummiesTest');
+		const layouts = Array('fullMatrixBeginner', 'dummiesTest');
+		const randomLayout: string = layouts[Math.floor(Math.random() * layouts.length)];
+		webApiWrapper.startGame(myId, randomLayout);
 	}
 
 	async function subscribeGame() {
-		webApiWrapper.subscribeGame(myId, 4);
+		webApiWrapper.subscribeGame(myId, 2);
 	}
 
 	async function updateGame() {
 		webApiWrapper.updateGame(currentGameId);
 	}
 
+	async function revealCell() {
+		webApiWrapper.revealCell(myId, currentGameId, 5, 3);
+	}
+
 	async function getGameTypes() {
 		webApiWrapper.getGameTypes();
+	}
+
+	async function resetGames() {
+		webApiWrapper.resetGames();
+	}
+
+	async function runningGames() {
+		webApiWrapper.getRunningTypes();
 	}
 
 	export let name: string;
@@ -60,8 +85,11 @@
 
 	<button on:click={startGame}>startGame</button>
 	<button on:click={subscribeGame}>Subscribe</button>
+	<button on:click={revealCell}>reveal</button>
 	<button on:click={updateGame}>update</button>
+	<button on:click={runningGames}>running Games List</button>
 	<button on:click={getGameTypes}>gameTypes</button>
+	<button on:click={resetGames}>reset Games</button>
 
 	<div>
 		<textarea id="updates" rows="10" cols="60">

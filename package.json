@@ -4,7 +4,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public",
+    "devHost": "rollup -c -w; sirv public --host 192.168.178.47",
+    "start": "sirv public --host 0.0.0.0",
     "validate": "svelte-check"
   },
   "devDependencies": {
