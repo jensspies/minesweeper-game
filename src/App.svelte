@@ -6,6 +6,7 @@
 	import { myWebsocketId, chatMessageQueue, myCurrentGameId } from './store';
 	import { WebSocketHandler } from './classes/webSocketHandler';
 	import { WebServiceWrapper } from './classes/webServiceWrapper';
+	import GameBoard from './components/gameBoard.svelte';
 
 	/*
 	const apiUrl = 'http://localhost:3000';
@@ -23,8 +24,8 @@
 	let socket: WebSocketHandler;
 	let webApiWrapper: WebServiceWrapper;
 	let myId = '';
-	let latestAnswer = 'Initial';
 	let currentGameId = 3;
+	export let name: string;
 
 	onMount(() => {
 		socket = new WebSocketHandler(websocketServerUrl);
@@ -42,6 +43,7 @@
 				console.log(value);
 			}
 		});
+
 	});
 
 	async function startGame(){
@@ -60,7 +62,10 @@
 	}
 
 	async function revealCell() {
-		webApiWrapper.revealCell(myId, currentGameId, 5, 3);
+		const currentGameBoard = {getWidth: () => {return 8}, getHeight: () => { return 8;}};
+		const randomColumn = Math.floor(Math.random() * currentGameBoard.getWidth())+1;
+		const randomRow = Math.floor(Math.random() * currentGameBoard.getHeight())+1;
+		webApiWrapper.revealCell(myId, currentGameId, randomColumn, randomRow);
 	}
 
 	async function getGameTypes() {
@@ -75,7 +80,6 @@
 		webApiWrapper.getRunningTypes();
 	}
 
-	export let name: string;
 </script>
 
 <main>
@@ -92,9 +96,7 @@
 	<button on:click={resetGames}>reset Games</button>
 
 	<div>
-		<textarea id="updates" rows="10" cols="60">
-			{latestAnswer}
-		</textarea>
+		<GameBoard />
 	</div>
 </main>
 

@@ -7,6 +7,6 @@ export const myCurrentGameId = createIdStore();
 
 export const chatMessageQueue = createFiFoMessageQueue();
 
-export const gameUpdateMessageQueue = createFiFoStringQueue();
+export const gameStatusMessageQueue = createFiFoMessageQueue();
 
 // TODO: Define different stores for message types to be defined)

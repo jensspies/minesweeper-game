@@ -1,4 +1,4 @@
-import { myWebsocketId, chatMessageQueue, myCurrentGameId } from '../store';
+import { myWebsocketId, chatMessageQueue, myCurrentGameId, gameStatusMessageQueue } from '../store';
 import { getMessageTypes, Message, MessageType } from './message';
 import { ChatMessage } from './messages/chatMessage';
 import { GameIdMessage } from './messages/gameId';
@@ -29,11 +29,11 @@ export class MessageParser {
                     myCurrentGameId.init(message);
                     break;
                 case MessageType.GameStatus:
-                    console.log(message);
+                    gameStatusMessageQueue.add(message);
                     break;
                 }
 
-        } else if (data != '') {
+        } else if (Object.keys(data).length > 0) {
             console.log('MessageType not registered:');
             console.log(data);
         }
