@@ -1,63 +1,85 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 
 	import Heading from './components/header.svelte';
-	import {onMount} from 'svelte';
-	
+
+	import { myWebsocketId, chatMessageQueue, myCurrentGameId } from './store';
+	import { WebSocketHandler } from './classes/webSocketHandler';
+	import { WebServiceWrapper } from './classes/webServiceWrapper';
+	import GameBoard from './components/gameBoard.svelte';
+
+	/*
 	const apiUrl = 'http://localhost:3000';
-	let socket;
+	const websocketServerUrl = 'ws:localhost:8181';
+	//*/
+	///*
+	const apiUrl = 'http://192.168.178.47:3000';
+	const websocketServerUrl = 'ws:192.168.178.47:8181';
+	//*/
+	/*
+	const apiUrl = 'http://15521a8c09d1.ngrok.io';
+	const websocketServerUrl = 'ws://e5711e9d3448.ngrok.io';
+	//*/
+
+	let socket: WebSocketHandler;
+	let webApiWrapper: WebServiceWrapper;
 	let myId = '';
-	let latestAnswer = 'Initial';
+	let currentGameId = 3;
+	export let name: string;
 
 	onMount(() => {
-		socket = new WebSocket('ws:localhost:8181');
-		socket.addEventListener('open', function (event){
-			if (event.data) {
-				myId = event.data.welcome;
+		socket = new WebSocketHandler(websocketServerUrl);
+		webApiWrapper = new WebServiceWrapper(apiUrl);
+		const myIdSubscription = myWebsocketId.subscribe((value) => {
+			myId = value;
+		});
+
+		const myCurrentGameIdSubscription = myCurrentGameId.subscribe((value) => {
+			currentGameId = parseInt(value);
+		});
+
+		const messageSubscription = chatMessageQueue.subscribe(value => {
+			if (value) {
+				console.log(value);
 			}
 		});
 
-		socket.addEventListener('message', function (event){
-			console.log(event);
-			let data;
-			try {
-				data = JSON.parse(event.data);
-			} catch (exc) {
-				console.log('no JSON data given!!')
-				
-			}
-			if (data.welcome) {
-				myId = data.welcome;
-			} else {
-				latestAnswer = data.message;
-			}
-		});
 	});
-	async function startGame(){
-		const url = apiUrl + '/start/' + myId + '/4';
-		await fetch(url, {mode: 'no-cors'})
-			.then((response) => {
-				;
-			});
 
+	async function startGame(){
+		//const layouts = Array('fullMatrixBeginner', 'fullMatrixAdvanced', 'fullMatrixExpert', 'dummiesTest');
+		const layouts = Array('fullMatrixBeginner', 'dummiesTest');
+		const randomLayout: string = layouts[Math.floor(Math.random() * layouts.length)];
+		webApiWrapper.startGame(myId, randomLayout);
 	}
 
 	async function subscribeGame() {
-		const url = apiUrl + '/subscribeGame/' + myId + '/4';
-		await fetch(url, {mode: 'no-cors'})
-			.then((response) => {
-				;
-			});
+		webApiWrapper.subscribeGame(myId, 2);
 	}
 
 	async function updateGame() {
-		const url = apiUrl + '/gameUpdate/4';
-		await fetch(url, {mode: 'no-cors'})
-			.then((response) => {
-				;
-			});
+		webApiWrapper.updateGame(currentGameId);
 	}
 
-	export let name: string;
+	async function revealCell() {
+		const currentGameBoard = {getWidth: () => {return 8}, getHeight: () => { return 8;}};
+		const randomColumn = Math.floor(Math.random() * currentGameBoard.getWidth())+1;
+		const randomRow = Math.floor(Math.random() * currentGameBoard.getHeight())+1;
+		webApiWrapper.revealCell(myId, currentGameId, randomColumn, randomRow);
+	}
+
+	async function getGameTypes() {
+		webApiWrapper.getGameTypes();
+	}
+
+	async function resetGames() {
+		webApiWrapper.resetGames();
+	}
+
+	async function runningGames() {
+		webApiWrapper.getRunningTypes();
+	}
+
 </script>
 
 <main>
@@ -67,11 +89,14 @@
 
 	<button on:click={startGame}>startGame</button>
 	<button on:click={subscribeGame}>Subscribe</button>
+	<button on:click={revealCell}>reveal</button>
 	<button on:click={updateGame}>update</button>
+	<button on:click={runningGames}>running Games List</button>
+	<button on:click={getGameTypes}>gameTypes</button>
+	<button on:click={resetGames}>reset Games</button>
+
 	<div>
-		<textarea id="updates" rows="10" cols="60">
-			{latestAnswer}
-		</textarea>
+		<GameBoard />
 	</div>
 </main>
 
