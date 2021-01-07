@@ -47,8 +47,8 @@
 	});
 
 	async function startGame(){
-		//const layouts = Array('fullMatrixBeginner', 'fullMatrixAdvanced', 'fullMatrixExpert', 'dummiesTest');
-		const layouts = Array('fullMatrixBeginner', 'dummiesTest');
+		const layouts = Array('fullMatrixBeginner', 'fullMatrixAdvanced', 'fullMatrixExpert', 'dummiesTest');
+		//const layouts = Array('fullMatrixBeginner', 'dummiesTest');
 		const randomLayout: string = layouts[Math.floor(Math.random() * layouts.length)];
 		webApiWrapper.startGame(myId, randomLayout);
 	}

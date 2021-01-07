@@ -36,11 +36,27 @@ import GameBoardRow from "./gameBoardRow.svelte";
 
 </script>
 
+<style>
+    div#gameboard {
+        text-align: center;
+    }
+
+    div.gameBorder {
+        display: inline-block;
+        background-color: gray;
+        padding: 2px 4px;
+        border-radius: 5px;
+    }
+
+</style>
 <div id='gameboard'>
-    <div class="gameBoarder">
+    <div class="gameBorder">
         {#if currentGameboard}
             {#each gameRows as cellRow}
-                <GameBoardRow on:revealCell on:toggleMark bind:currentRowCells={cellRow}/>
+                <GameBoardRow
+                    bind:currentRowCells={cellRow}
+                    on:revealCell
+                    on:toggleMark/>
             {/each}
         {/if}
     </div>

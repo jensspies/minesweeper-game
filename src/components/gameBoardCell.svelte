@@ -21,6 +21,7 @@ import Untouched from "./cellTypes/untouched.svelte";
                 component = Bomb;
                 break;
             case currentCell.isRevealed:
+                additionalClass = 'revealed';
                 component = Revealed;
                 break;
             case currentCell.isDummy:
@@ -48,6 +49,10 @@ import Untouched from "./cellTypes/untouched.svelte";
         width:30px;
         height: 30px;
         display: inline-block;
+        margin: 1px;
+        border-radius: 5px;
+        background-color: lightgray;
+
     }
     div.exploded {
         background-color: red;
@@ -59,6 +64,10 @@ import Untouched from "./cellTypes/untouched.svelte";
     div.markedBomb {
         background-color: orange;
     }
+
+    div.revealed {
+        background-color: gray;
+    }
 </style>
 
     <div class="cell {additionalClass}"
@@ -66,6 +75,8 @@ import Untouched from "./cellTypes/untouched.svelte";
         on:click="{() => dispatch('revealCell', currentCell.coord)}"
         >
         {#if currentCell}
+        <span>
             <svelte:component this={findComponent()} bind:cell={currentCell}/>
+        </span>
         {/if}
     </div>
