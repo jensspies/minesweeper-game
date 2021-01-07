@@ -61,11 +61,18 @@
 		webApiWrapper.updateGame(currentGameId);
 	}
 
-	async function revealCell() {
-		const currentGameBoard = {getWidth: () => {return 8}, getHeight: () => { return 8;}};
-		const randomColumn = Math.floor(Math.random() * currentGameBoard.getWidth())+1;
-		const randomRow = Math.floor(Math.random() * currentGameBoard.getHeight())+1;
-		webApiWrapper.revealCell(myId, currentGameId, randomColumn, randomRow);
+	async function revealCell(event) {
+		let column = -1;
+		let row = -1;
+		if (event.type === 'revealCell') {
+			column = event.detail.column;
+			row = event.detail.row;
+		} else {
+			const currentGameBoard = {getWidth: () => {return 8}, getHeight: () => { return 8;}};
+			column = Math.floor(Math.random() * currentGameBoard.getWidth())+1;
+			row = Math.floor(Math.random() * currentGameBoard.getHeight())+1;
+		}
+		webApiWrapper.revealCell(myId, currentGameId, column, row);
 	}
 
 	async function getGameTypes() {
@@ -78,6 +85,16 @@
 
 	async function runningGames() {
 		webApiWrapper.getRunningTypes();
+	}
+
+	async function toggleMark(event) {
+		let column = -1;
+		let row = -1;
+		if (event.type === 'toggleMark') {
+			column = event.detail.column;
+			row = event.detail.row;
+		}
+		webApiWrapper.toggleCell(myId, currentGameId, column, row);
 	}
 
 </script>
@@ -96,7 +113,7 @@
 	<button on:click={resetGames}>reset Games</button>
 
 	<div>
-		<GameBoard />
+		<GameBoard on:revealCell="{revealCell}" on:toggleMark={toggleMark}/>
 	</div>
 </main>
 

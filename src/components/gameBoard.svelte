@@ -5,7 +5,7 @@ import type { GameStatusMessage } from "../classes/messages/gameStatus";
 import { gameStatusMessageQueue } from "../store";
 import GameBoardRow from "./gameBoardRow.svelte";
 
-    export let currentGameboard: GameStatusMessage;
+    let currentGameboard: GameStatusMessage;
     let gameRows: any[];
 
     let getBoardRows = (): any[] => {
@@ -40,7 +40,7 @@ import GameBoardRow from "./gameBoardRow.svelte";
     <div class="gameBoarder">
         {#if currentGameboard}
             {#each gameRows as cellRow}
-                <GameBoardRow bind:currentRowCells={cellRow}/>
+                <GameBoardRow on:revealCell on:toggleMark bind:currentRowCells={cellRow}/>
             {/each}
         {/if}
     </div>

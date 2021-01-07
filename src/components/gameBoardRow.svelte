@@ -8,7 +8,7 @@ import GameBoardCell from "./gameBoardCell.svelte";
     <div class="boardRow">
         {#if currentRowCells}
             {#each currentRowCells as cell}
-                <GameBoardCell bind:currentCell={cell} />
+                <GameBoardCell on:revealCell on:toggleMark bind:currentCell={cell} />
             {/each}
         {/if}
     </div>

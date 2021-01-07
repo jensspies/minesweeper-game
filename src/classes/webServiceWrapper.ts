@@ -30,6 +30,11 @@ export class WebServiceWrapper {
         return this.callApi(url);
     }
 
+    public async toggleCell(myId: string,currentGameId: number,column: number,row: number) {
+        const url = this._getToggleCellUrl(myId, currentGameId, column, row);
+        return this.callApi(url);
+    }
+
     public async getGameTypes() {
         const url = this._getGameTypesUrl();
         return this.callApi(url);
@@ -81,6 +86,10 @@ export class WebServiceWrapper {
 
     private _getRevealCellUrl(myId: string, currentGameId: number, column: number, row: number) {
         return this._getApiUrl() + '/reveal/' + myId + '/' + currentGameId + '/' + column + '/' + row;
+    }
+
+    private _getToggleCellUrl(myId: string, currentGameId: number, column: number, row: number) {
+        return this._getApiUrl() + '/toggle/' + myId + '/' + currentGameId + '/' + column + '/' + row;
     }
 
     private _getGameSubscribeUrl(myId: string, gameId: number): string {
