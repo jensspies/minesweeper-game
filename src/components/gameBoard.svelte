@@ -44,21 +44,28 @@ import GameBoardRow from "./gameBoardRow.svelte";
     div.gameBorder {
         display: inline-block;
         background-color: gray;
-        padding: 2px 4px;
+        padding: 2px 4px 2px 3px;
         border-radius: 5px;
+        -webkit-user-select: none;  /* Chrome all / Safari all */
+        -moz-user-select: none;     /* Firefox all */
+        -ms-user-select: none;      /* IE 10+ */
+        user-select: none;
     }
 
 </style>
 <div id='gameboard'>
-    <div class="gameBorder">
-        {#if currentGameboard}
-            {#each gameRows as cellRow}
-                <GameBoardRow
-                    bind:currentRowCells={cellRow}
-                    on:revealCell
-                    on:toggleMark/>
-            {/each}
+    {#if currentGameboard}
+        {#if currentGameboard.gameStatus === 'Won'}
+            <p>YOU WON!!!</p>
         {/if}
-    </div>
+        <div class="gameBorder">
+                {#each gameRows as cellRow}
+                    <GameBoardRow
+                        bind:currentRowCells={cellRow}
+                        on:revealCell
+                        on:toggleMark/>
+                {/each}
+        </div>
+    {/if}
 
 </div>

@@ -7,7 +7,11 @@ import GameBoardCell from "./gameBoardCell.svelte";
 
 <style>
     .boardRow {
-        padding: 2px 0px;
+        padding: 1px 0px;
+        -webkit-user-select: none;  /* Chrome all / Safari all */
+        -moz-user-select: none;     /* Firefox all */
+        -ms-user-select: none;      /* IE 10+ */
+        user-select: none;
     }
 
 </style>

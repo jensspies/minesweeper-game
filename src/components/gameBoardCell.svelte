@@ -49,7 +49,7 @@ import Untouched from "./cellTypes/untouched.svelte";
         width:30px;
         height: 30px;
         display: inline-block;
-        margin: 1px;
+        margin: 1px 1px 1px 2px;
         border-radius: 5px;
         background-color: lightgray;
 
@@ -67,6 +67,9 @@ import Untouched from "./cellTypes/untouched.svelte";
 
     div.revealed {
         background-color: gray;
+        border: 1px solid;
+        margin:0px 0px 0px 1px;
+        border-color: white;
     }
 </style>
 

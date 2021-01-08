@@ -7,7 +7,7 @@ export class GameStatusMessage extends Message {
     private boardCells: any;
     private height: number;
     private width: number;
-    private coord: any;
+    public gameStatus: any;
     constructor(data: any) {
         super(data);
         this.id = data.gameId;
@@ -15,7 +15,7 @@ export class GameStatusMessage extends Message {
         this.timestamp = data.timestamp;
         this.width = data.width;
         this.height = data.height;
-        this.coord = data.coord;
+        this.gameStatus = data.gameState;
     }
 
     public getId(): string {
@@ -36,6 +36,10 @@ export class GameStatusMessage extends Message {
 
     public getWidth() {
         return this.width;
+    }
+
+    public getGameStatus() {
+        return this.gameStatus;
     }
 
     protected validateData(data) {

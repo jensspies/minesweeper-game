@@ -1,4 +1,4 @@
-import { myWebsocketId, chatMessageQueue, myCurrentGameId, gameStatusMessageQueue } from '../store';
+import { myWebsocketId, chatMessageQueue, myCurrentGameId, gameStatusMessageQueue, availableTypes } from '../store';
 import { getMessageTypes, Message, MessageType } from './message';
 import { ChatMessage } from './messages/chatMessage';
 import { GameIdMessage } from './messages/gameId';
@@ -23,7 +23,7 @@ export class MessageParser {
                     chatMessageQueue.add(message);
                     break;
                 case MessageType.GameTypes:
-                    console.log(message);
+                    availableTypes.set(message.data);
                     break;
                 case MessageType.GameId:
                     myCurrentGameId.init(message);

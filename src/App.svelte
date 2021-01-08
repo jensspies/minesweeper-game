@@ -3,14 +3,20 @@
 
 	import Heading from './components/header.svelte';
 
-	import { myWebsocketId, chatMessageQueue, myCurrentGameId } from './store';
+	import { myWebsocketId, chatMessageQueue, myCurrentGameId, availableTypes, gameSelection } from './store';
 	import { WebSocketHandler } from './classes/webSocketHandler';
 	import { WebServiceWrapper } from './classes/webServiceWrapper';
 	import GameBoard from './components/gameBoard.svelte';
+	import GameTypeSelection from './components/gameTypeSelection.svelte';
+	import type { OptionSelect } from './main.d';
 
 	/*
 	const apiUrl = 'http://localhost:3000';
 	const websocketServerUrl = 'ws:localhost:8181';
+	//*/
+	/*
+	const apiUrl = 'http://proxya.ddnss.org:3000';
+	const websocketServerUrl = 'ws:proxya.ddnss.org:8181';
 	//*/
 	///*
 	const apiUrl = 'http://192.168.178.47:3000';
@@ -25,7 +31,10 @@
 	let webApiWrapper: WebServiceWrapper;
 	let myId = '';
 	let currentGameId = 3;
-	export let name: string;
+	const technicalNameRandom = 'default';
+	const defaultEntry:OptionSelect = {technicalName: technicalNameRandom, name: 'Random game', description: 'chose a random layout of the existing ones'}
+	let availableGameTypes = [defaultEntry];
+	let selectedGameType: string;
 
 	onMount(() => {
 		socket = new WebSocketHandler(websocketServerUrl);
@@ -38,19 +47,39 @@
 			currentGameId = parseInt(value);
 		});
 
+		const myAvailableTypesSubscription = availableTypes.subscribe((value) => {
+			if (value.length > 0) {
+				availableGameTypes = [defaultEntry];
+				Array.prototype.push.apply(availableGameTypes, value);
+			}
+		});
+
 		const messageSubscription = chatMessageQueue.subscribe(value => {
 			if (value) {
 				console.log(value);
 			}
 		});
 
+		webApiWrapper.getGameTypes();
+
 	});
 
-	async function startGame(){
-		const layouts = Array('fullMatrixBeginner', 'fullMatrixAdvanced', 'fullMatrixExpert', 'dummiesTest');
-		//const layouts = Array('fullMatrixBeginner', 'dummiesTest');
-		const randomLayout: string = layouts[Math.floor(Math.random() * layouts.length)];
-		webApiWrapper.startGame(myId, randomLayout);
+	function setSelectedGameType(event) {
+		console.log(event);
+		if (event.detail) {
+			selectedGameType = event.detail;
+		} else {
+			selectedGameType = 'default'
+		}
+	}
+
+	async function startGame(event){
+		let startGameType = event.detail;
+		if (startGameType === technicalNameRandom && availableGameTypes.length > 0) {
+			startGameType = availableGameTypes[Math.floor(Math.random() * (availableGameTypes.length - 1)) +1].technicalName;
+		}
+
+		webApiWrapper.startGame(myId, startGameType);
 	}
 
 	async function subscribeGame() {
@@ -101,10 +130,13 @@
 
 <main>
 	<Heading/>
-	<h1>Hello {name}!</h1>
-	<div>connected as {myId}</div>
 
-	<button on:click={startGame}>startGame</button>
+	<GameTypeSelection
+		on:startGame="{startGame}"
+		bind:options="{availableGameTypes}"
+		bind:selected="{selectedGameType}"
+		/>
+
 	<button on:click={subscribeGame}>Subscribe</button>
 	<button on:click={revealCell}>reveal</button>
 	<button on:click={updateGame}>update</button>
@@ -113,7 +145,9 @@
 	<button on:click={resetGames}>reset Games</button>
 
 	<div>
-		<GameBoard on:revealCell="{revealCell}" on:toggleMark={toggleMark}/>
+		<GameBoard
+			on:revealCell="{revealCell}"
+			on:toggleMark={toggleMark}/>
 	</div>
 </main>
 
