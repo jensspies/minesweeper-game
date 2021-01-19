@@ -3,23 +3,27 @@ import { Message, MessageType } from "../message";
 export class GameStatusMessage extends Message {
 
     private timestamp = 0;
-    private id = '';
+    private gameId = '';
     private boardCells: any;
     private height: number;
     private width: number;
-    public gameStatus: any;
+    private gameStatus: any;
+    private markedBombs: number;
+    private totalBombCount: any;
     constructor(data: any) {
         super(data);
-        this.id = data.gameId;
+        this.gameId = data.gameId;
         this.boardCells = data.currentState;
         this.timestamp = data.timestamp;
         this.width = data.width;
         this.height = data.height;
         this.gameStatus = data.gameState;
+        this.markedBombs = data.markedBombs;
+        this.totalBombCount = data.totalBombCount
     }
 
     public getId(): string {
-        return this.id;
+        return this.gameId;
     }
 
     protected setType(): void {
@@ -36,6 +40,14 @@ export class GameStatusMessage extends Message {
 
     public getWidth() {
         return this.width;
+    }
+
+    public getMarkedBombs() {
+        return this.markedBombs;
+    }
+
+    public getTotalBombs() {
+        return this.totalBombCount;
     }
 
     public getGameStatus() {

@@ -3,3 +3,7 @@ export interface OptionSelect {
 	name: string;
 	description: string;
 }
+
+export interface Cell {
+	bombNeighbours: number
+}

@@ -1,4 +1,7 @@
 <script lang="ts">
-    export let cell: any;
+import type { Cell } from "../../main";
+
+
+    export let cell: Cell;
 </script>
 *

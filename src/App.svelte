@@ -151,6 +151,7 @@
 
 	<div>
 		<GameBoard
+			bind:currentGameId="{currentGameId}"
 			on:revealCell="{revealCell}"
 			on:toggleMark="{toggleMark}"
 			on:revealSafeCell="{revealSafeCell}"/>

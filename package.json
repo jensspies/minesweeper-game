@@ -16,7 +16,7 @@
     "docker:stop": "docker stop MinesweeperFrontend",
 
     "docker:remove": "docker rm MinesweeperFrontend && docker rmi minesweeperfrontend:latest",
-    "docker:create": "docker run -d -p 8181:8181 -p 3000:3000 --name=MinesweeperFrontend minesweeperfrontend:latest",
+    "docker:create": "docker run -d -p 5000:5000 --name=MinesweeperFrontend minesweeperfrontend:latest",
     "docker:build": "docker build --pull --rm -f \"Dockerfile\" -t minesweeperfrontend:latest \".\""
   },
   "devDependencies": {

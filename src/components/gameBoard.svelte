@@ -6,6 +6,7 @@ import { gameStatusMessageQueue } from "../store";
 import GameBoardRow from "./gameBoardRow.svelte";
 
     let currentGameboard: GameStatusMessage;
+    export let currentGameId: number = -1;
     let gameRows: any[];
 
     let getBoardRows = (): any[] => {
@@ -28,8 +29,10 @@ import GameBoardRow from "./gameBoardRow.svelte";
     onMount(() => {
 		const gameStatusSubscription = gameStatusMessageQueue.subscribe(value => {
 			if (value) {
-                currentGameboard = value;
-                gameRows = getBoardRows();
+                if ((currentGameId > -1) || !currentGameboard || value.gameId == currentGameboard.getId()) {
+                    currentGameboard = value;
+                    gameRows = getBoardRows();
+                }
 			}
 		});
     });
@@ -55,7 +58,8 @@ import GameBoardRow from "./gameBoardRow.svelte";
 </style>
 <div id='gameboard'>
     {#if currentGameboard}
-        {#if currentGameboard.gameStatus === 'Won'}
+        <p>Marked {currentGameboard.getMarkedBombs()} of {currentGameboard.getTotalBombs()}</p>
+        {#if currentGameboard.getGameStatus() === 'Won'}
             <p>YOU WON!!!</p>
         {/if}
         <div class="gameBorder">

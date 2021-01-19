@@ -1,7 +1,10 @@
 
 <script lang="ts">
+import type { Cell } from "../../main";
+
+
     const space = ' ';
-    export let cell: any;
+    export let cell: Cell;
 </script>
 {#if cell.bombNeighbours > 0 }
  {cell.bombNeighbours}
