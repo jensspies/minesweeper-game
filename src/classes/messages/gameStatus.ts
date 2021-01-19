@@ -56,7 +56,7 @@ export class GameStatusMessage extends Message {
 
     protected validateData(data) {
         let valid = false;
-        if (data.gameId && data.timestamp) {
+        if (data.type === this.type.toString()) {
             valid = true;
         }
         return valid;

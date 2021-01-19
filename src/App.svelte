@@ -9,6 +9,7 @@
 	import GameBoard from './components/gameBoard.svelte';
 	import GameTypeSelection from './components/gameTypeSelection.svelte';
 	import type { OptionSelect } from './main.d';
+	import RunningGames from './components/runningGames.svelte';
 
 	/*
 	const apiUrl = 'http://localhost:3000';
@@ -74,8 +75,12 @@
 		}
 	}
 
-	async function subscribeGame() {
-		webApiWrapper.subscribeGame(myId, 2);
+	async function subscribeGame(event) {
+		let gameId = 2;
+		if (event.type === 'observeGame') {
+			gameId = event.detail;
+		}
+		webApiWrapper.subscribeGame(myId, gameId);
 	}
 
 	async function updateGame() {
@@ -135,27 +140,31 @@
 
 <main>
 	<Heading/>
-
-	<GameTypeSelection
-		on:startGame="{startGame}"
-		options="{availableGameTypes}"
-		selected="{selectedGameType}"
-		/>
-
-	<button on:click={subscribeGame}>Subscribe</button>
-	<button on:click={revealCell}>reveal</button>
-	<button on:click={updateGame}>update</button>
-	<button on:click={runningGames}>running Games List</button>
-	<button on:click={getGameTypes}>gameTypes</button>
-	<button on:click={resetGames}>reset Games</button>
-
-	<div>
+	<div class="dummyButtons">
+		<button on:click={subscribeGame}>Subscribe</button>
+		<button on:click={revealCell}>reveal</button>
+		<button on:click={updateGame}>update</button>
+		<button on:click={runningGames}>running Games List</button>
+		<button on:click={getGameTypes}>gameTypes</button>
+		<button on:click={resetGames}>reset Games</button>
+	</div>
+<div class="body">
+	<div class="sidebar">
+		<GameTypeSelection
+			on:startGame="{startGame}"
+			options="{availableGameTypes}"
+			selected="{selectedGameType}"
+			/>
+		<RunningGames on:observeGame={subscribeGame}/>
+	</div>
+	<div class="game">
 		<GameBoard
 			bind:currentGameId="{currentGameId}"
 			on:revealCell="{revealCell}"
 			on:toggleMark="{toggleMark}"
 			on:revealSafeCell="{revealSafeCell}"/>
 	</div>
+</div>
 </main>
 
 <style>
@@ -171,6 +180,18 @@
 		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
+	}
+
+	div.body {
+		display: flex;
+	}
+
+	div.body .sidebar {
+		flex:2
+	}
+
+	div.body .game {
+		flex: 4;
 	}
 
 	@media (min-width: 640px) {

@@ -1,9 +1,10 @@
-import { myWebsocketId, chatMessageQueue, myCurrentGameId, gameStatusMessageQueue, availableTypes } from '../store';
+import { myWebsocketId, chatMessageQueue, myCurrentGameId, gameStatusMessageQueue, availableTypes, openGamesToObserveQueue } from '../store';
 import { getMessageTypes, Message, MessageType } from './message';
 import { ChatMessage } from './messages/chatMessage';
 import { GameIdMessage } from './messages/gameId';
 import { GameStatusMessage } from './messages/gameStatus';
 import { GameTypesMessage } from './messages/gameTypes';
+import { RunningGamesMessage } from './messages/runningGames';
 import { WelcomeMessage } from './messages/welcome';
 
 export class MessageParser {
@@ -31,6 +32,9 @@ export class MessageParser {
                 case MessageType.GameStatus:
                     gameStatusMessageQueue.add(message);
                     break;
+                case MessageType.OpenGames:
+                    openGamesToObserveQueue.add(message);
+                    break;
                 }
 
         } else if (Object.keys(data).length > 0) {
@@ -46,21 +50,29 @@ export class MessageParser {
 
     private getMessageObjectStatic(data): Message|undefined {
         let foundMessage: Message = undefined;
+
+        if (data && data.type) {
+            switch (data.type) {
+                case MessageType.GameTypes:
+                    foundMessage = new GameTypesMessage(data);
+                    break;
+                case MessageType.OpenGames:
+                    foundMessage = new RunningGamesMessage(data);
+                    break;
+                case MessageType.GameStatus:
+                    foundMessage = new GameStatusMessage(data);
+                    break;
+            }
+        }
+
         if (data.welcome) {
             foundMessage = new WelcomeMessage(data);
         }
         if (data.message) {
             foundMessage = new ChatMessage(data);
         }
-        if (data.type && data.type === 'GameTypes') {
-            foundMessage = new GameTypesMessage(data);
-        }
         if (data.gameId && !data.timestamp) {
             foundMessage = new GameIdMessage(data);
-        }
-
-        if (data.gameId && data.timestamp) {
-            foundMessage = new GameStatusMessage(data);
         }
         return foundMessage;
     }

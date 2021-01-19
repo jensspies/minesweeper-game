@@ -58,9 +58,10 @@ import GameBoardRow from "./gameBoardRow.svelte";
 </style>
 <div id='gameboard'>
     {#if currentGameboard}
-        <p>Marked {currentGameboard.getMarkedBombs()} of {currentGameboard.getTotalBombs()}</p>
         {#if currentGameboard.getGameStatus() === 'Won'}
             <p>YOU WON!!!</p>
+        {:else}
+            <p>Marked {currentGameboard.getMarkedBombs()} of {currentGameboard.getTotalBombs()}</p>
         {/if}
         <div class="gameBorder">
                 {#each gameRows as cellRow}

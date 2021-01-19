@@ -14,4 +14,6 @@ export const chatMessageQueue = createFiFoMessageQueue();
 
 export const gameStatusMessageQueue = createFiFoMessageQueue();
 
+export const openGamesToObserveQueue = createFiFoMessageQueue();
+
 // TODO: Define different stores for message types to be defined)
