@@ -76,6 +76,7 @@ import Untouched from "./cellTypes/untouched.svelte";
     <div class="cell {additionalClass}"
         on:contextmenu|preventDefault="{() => dispatch('toggleMark', currentCell.coord)}"
         on:click="{() => dispatch('revealCell', currentCell.coord)}"
+        on:dblclick="{() => dispatch('revealSafeCell', currentCell.coord)}"
         >
         {#if currentCell}
         <span>

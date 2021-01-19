@@ -14,11 +14,11 @@
 	const apiUrl = 'http://localhost:3000';
 	const websocketServerUrl = 'ws:localhost:8181';
 	//*/
-	/*
+	///*
 	const apiUrl = 'http://proxya.ddnss.org:3000';
 	const websocketServerUrl = 'ws:proxya.ddnss.org:8181';
 	//*/
-	///*
+	/*
 	const apiUrl = 'http://192.168.178.47:3000';
 	const websocketServerUrl = 'ws:192.168.178.47:8181';
 	//*/
@@ -30,11 +30,11 @@
 	let socket: WebSocketHandler;
 	let webApiWrapper: WebServiceWrapper;
 	let myId = '';
-	let currentGameId = 3;
+	let currentGameId = -1;
 	const technicalNameRandom = 'default';
 	const defaultEntry:OptionSelect = {technicalName: technicalNameRandom, name: 'Random game', description: 'chose a random layout of the existing ones'}
 	let availableGameTypes = [defaultEntry];
-	let selectedGameType: string;
+	let selectedGameType: string = undefined;
 
 	onMount(() => {
 		socket = new WebSocketHandler(websocketServerUrl);
@@ -64,22 +64,14 @@
 
 	});
 
-	function setSelectedGameType(event) {
-		console.log(event);
-		if (event.detail) {
-			selectedGameType = event.detail;
-		} else {
-			selectedGameType = 'default'
-		}
-	}
-
 	async function startGame(event){
 		let startGameType = event.detail;
 		if (startGameType === technicalNameRandom && availableGameTypes.length > 0) {
 			startGameType = availableGameTypes[Math.floor(Math.random() * (availableGameTypes.length - 1)) +1].technicalName;
 		}
-
-		webApiWrapper.startGame(myId, startGameType);
+		if (availableGameTypes.length > 0 ) {
+			webApiWrapper.startGame(myId, startGameType);
+		}
 	}
 
 	async function subscribeGame() {
@@ -102,6 +94,19 @@
 			row = Math.floor(Math.random() * currentGameBoard.getHeight())+1;
 		}
 		webApiWrapper.revealCell(myId, currentGameId, column, row);
+	}
+
+	async function revealSafeCell(event) {
+		console.log('double click registered');
+		let column = -1;
+		let row = -1;
+		if (event.type === 'revealSafeCell') {
+			column = event.detail.column;
+			row = event.detail.row;
+		}
+		if (column > -1 && row > -1){
+			webApiWrapper.revealSafeCell(myId, currentGameId, column, row);
+		}
 	}
 
 	async function getGameTypes() {
@@ -133,8 +138,8 @@
 
 	<GameTypeSelection
 		on:startGame="{startGame}"
-		bind:options="{availableGameTypes}"
-		bind:selected="{selectedGameType}"
+		options="{availableGameTypes}"
+		selected="{selectedGameType}"
 		/>
 
 	<button on:click={subscribeGame}>Subscribe</button>
@@ -147,7 +152,8 @@
 	<div>
 		<GameBoard
 			on:revealCell="{revealCell}"
-			on:toggleMark={toggleMark}/>
+			on:toggleMark="{toggleMark}"
+			on:revealSafeCell="{revealSafeCell}"/>
 	</div>
 </main>
 

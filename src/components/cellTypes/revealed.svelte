@@ -1,6 +1,10 @@
 
 <script lang="ts">
-
+    const space = ' ';
     export let cell: any;
 </script>
-{cell.bombNeighbours}
+{#if cell.bombNeighbours > 0 }
+ {cell.bombNeighbours}
+{:else}
+ &nbsp;
+{/if}

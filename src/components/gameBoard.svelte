@@ -63,7 +63,8 @@ import GameBoardRow from "./gameBoardRow.svelte";
                     <GameBoardRow
                         bind:currentRowCells={cellRow}
                         on:revealCell
-                        on:toggleMark/>
+                        on:toggleMark
+                        on:revealSafeCell/>
                 {/each}
         </div>
     {/if}
