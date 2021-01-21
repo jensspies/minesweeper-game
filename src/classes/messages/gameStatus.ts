@@ -2,28 +2,30 @@ import { Message, MessageType } from "../message";
 
 export class GameStatusMessage extends Message {
 
-    private timestamp = 0;
-    private gameId = '';
-    private boardCells: any;
-    private height: number;
-    private width: number;
-    private gameStatus: any;
-    private markedBombs: number;
-    private totalBombCount: any;
+    public timestamp = 0;
+    public gameId: number = -1;
+    public boardCells: any;
+    public height: number;
+    public width: number;
+    public gameStatus: any;
+    public markedBombs: number;
+    public totalBombCount: any;
+    public gameWon: boolean;
+    public cellRows: any[];
+    public isOver: boolean;
     constructor(data: any) {
         super(data);
-        this.gameId = data.gameId;
+        this.gameId = parseInt(data.gameId);
         this.boardCells = data.currentState;
         this.timestamp = data.timestamp;
         this.width = data.width;
         this.height = data.height;
         this.gameStatus = data.gameState;
+        this.setBoardRows();
+        this.gameWon = data.gameState === 'Won';
         this.markedBombs = data.markedBombs;
         this.totalBombCount = data.totalBombCount
-    }
-
-    public getId(): string {
-        return this.gameId;
+        this.isOver = data.isOver;
     }
 
     protected setType(): void {
@@ -62,4 +64,20 @@ export class GameStatusMessage extends Message {
         return valid;
     }
 
+    private setBoardRows() {
+        const rows = [];
+        let startIndex = 0;
+        const width = this.getWidth();
+        const height = this.getHeight();
+        const maximumIndex = (height * width);
+        while (startIndex + width <=  maximumIndex) {
+            rows.push(this.getCells().filter( (item, index) => {
+                const greaterThanMinIndex = index >= startIndex;
+                const smallerThanMaxIndex = index < startIndex + width;
+                return greaterThanMinIndex && smallerThanMaxIndex;
+            }));
+            startIndex += width;
+        }
+        this.cellRows = rows;
+    }
 }

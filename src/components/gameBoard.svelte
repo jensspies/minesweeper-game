@@ -1,42 +1,32 @@
 <script lang="ts">
-import { onMount } from "svelte";
+import { createEventDispatcher, onMount } from "svelte";
+import { current_component } from "svelte/internal";
 
 import type { GameStatusMessage } from "../classes/messages/gameStatus";
-import { gameStatusMessageQueue } from "../store";
 import GameBoardRow from "./gameBoardRow.svelte";
 
-    let currentGameboard: GameStatusMessage;
-    export let currentGameId: number = -1;
-    let gameRows: any[];
-
-    let getBoardRows = (): any[] => {
-        const rows = [];
-        let startIndex = 0;
-        const width = currentGameboard.getWidth();
-        const height = currentGameboard.getHeight();
-        const maximumIndex = (height * width);
-        while (startIndex + width <=  maximumIndex) {
-            rows.push(currentGameboard.getCells().filter( (item, index) => {
-                const greaterThanMinIndex = index >= startIndex;
-                const smallerThanMaxIndex = index < startIndex + width;
-                return greaterThanMinIndex && smallerThanMaxIndex;
-            }));
-            startIndex += width;
-        }
-        return rows;
-    };
-
+    export let myGameBoard: GameStatusMessage;
+    const dispatch: ((name: string, detail?: any) => void) = createEventDispatcher();
     onMount(() => {
-		const gameStatusSubscription = gameStatusMessageQueue.subscribe(value => {
-			if (value) {
-                if ((currentGameId > -1) || !currentGameboard || value.gameId == currentGameboard.getId()) {
-                    currentGameboard = value;
-                    gameRows = getBoardRows();
-                }
-			}
-		});
     });
 
+    const toggleMark = (event) => {
+        const data = event.detail;
+        data['gameId'] = myGameBoard.gameId;
+        dispatch(event.type, data);
+    }
+
+    const revealCell = (event) => {
+        const data = event.detail;
+        data['gameId'] = myGameBoard.gameId;
+        dispatch(event.type, data);
+    }
+
+    const revealSafeCell = (event) => {
+        const data = event.detail;
+        data['gameId'] = myGameBoard.gameId;
+        dispatch(event.type, data);
+    }
 </script>
 
 <style>
@@ -57,21 +47,24 @@ import GameBoardRow from "./gameBoardRow.svelte";
 
 </style>
 <div id='gameboard'>
-    {#if currentGameboard}
-        {#if currentGameboard.getGameStatus() === 'Won'}
+    {#if myGameBoard}
+        {#if myGameBoard.gameWon}
             <p>YOU WON!!!</p>
         {:else}
-            <p>Marked {currentGameboard.getMarkedBombs()} of {currentGameboard.getTotalBombs()}</p>
+            <p>Marked {myGameBoard.getMarkedBombs()} of {myGameBoard.getTotalBombs()}</p>
         {/if}
         <div class="gameBorder">
-                {#each gameRows as cellRow}
+            {#each myGameBoard.cellRows as cellRow}
                     <GameBoardRow
-                        bind:currentRowCells={cellRow}
-                        on:revealCell
-                        on:toggleMark
-                        on:revealSafeCell/>
-                {/each}
+                    bind:gameWon={myGameBoard.gameWon}
+                    bind:currentRowCells={cellRow}
+                    on:revealCell={revealCell}
+                    on:toggleMark={toggleMark}
+                    on:revealSafeCell={revealSafeCell}/>
+            {/each}
         </div>
+    {:else}
+        GameBoard seems not to be defined
     {/if}
 
 </div>

@@ -1,8 +1,9 @@
 <script lang="ts">
-import GameBoardCell from "./gameBoardCell.svelte";
 
+    import GameBoardCell from "./gameBoardCell.svelte";
 
     export let currentRowCells: any[];
+    export let gameWon: boolean;
 </script>
 
 <style>
@@ -18,7 +19,13 @@ import GameBoardCell from "./gameBoardCell.svelte";
     <div class="boardRow">
         {#if currentRowCells}
             {#each currentRowCells as cell}
-                <GameBoardCell on:revealCell on:toggleMark on:revealSafeCell bind:currentCell={cell} />
+                <GameBoardCell
+                    bind:gameWon={gameWon}
+                    bind:currentCell={cell}
+                    on:revealCell
+                    on:toggleMark
+                    on:revealSafeCell
+                />
             {/each}
         {/if}
     </div>

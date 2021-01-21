@@ -12,33 +12,37 @@ import Untouched from "./cellTypes/untouched.svelte";
     const dispatch: ((name: string, detail?: any) => void) = createEventDispatcher();
 
     export let currentCell: any;
+    export let gameWon: boolean;
+
     let additionalClass: string = '';
     const findComponent = () => {
         let component = Untouched;
+        let newClass = '';
         switch (true) {
             case currentCell.exploded:
-                additionalClass = 'exploded';
+                newClass = 'exploded';
                 component = Bomb;
                 break;
             case currentCell.isRevealed:
-                additionalClass = 'revealed';
+                newClass = 'revealed';
                 component = Revealed;
                 break;
             case currentCell.isDummy:
-                additionalClass = 'dummy';
+                newClass = 'dummy';
                 component = Dummy;
                 break;
             case currentCell.mark === 1:
-                additionalClass = 'markedBomb';
+                newClass = 'markedBomb';
+                if (gameWon) {newClass += ' won';}
                 component = MarkedBomb;
                 break;
             case currentCell.mark === 2:
-                additionalClass = 'markedQuestion';
+                newClass = 'markedQuestion';
                 component = MarkedQuestion
                 break;
             default:
-                additionalClass = '';
         }
+        additionalClass = newClass;
         return component;
     }
 
@@ -52,7 +56,10 @@ import Untouched from "./cellTypes/untouched.svelte";
         margin: 1px 1px 1px 2px;
         border-radius: 5px;
         background-color: lightgray;
-
+        -webkit-user-select: none;  /* Chrome all / Safari all */
+        -moz-user-select: none;     /* Firefox all */
+        -ms-user-select: none;      /* IE 10+ */
+        user-select: none;
     }
     div.exploded {
         background-color: red;
@@ -63,6 +70,10 @@ import Untouched from "./cellTypes/untouched.svelte";
 
     div.markedBomb {
         background-color: orange;
+    }
+
+    div.markedBomb.won {
+        background-color: green;
     }
 
     div.revealed {
