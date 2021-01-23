@@ -23,7 +23,8 @@ export class GameKeeper {
 
     /**
      * TODO: doesn't work like expected yet.
-     * App-Componewnt gets confused with the game boards
+     * App-Component gets confused with multiple the game boards
+     * (probably missing "Object-Index")
      * @param game
      */
     private addMultipleGames(game: GameStatusMessage) {
