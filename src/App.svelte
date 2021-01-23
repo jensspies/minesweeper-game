@@ -3,7 +3,7 @@
 
 	import Heading from './components/header.svelte';
 
-	import { myWebsocketId, chatMessageQueue, myCurrentGameId, availableTypes, gameSelection, gameStatusMessageQueue, myObservedGames } from './store';
+	import { myWebsocketId, chatMessageQueue, availableTypes, gameStatusMessageQueue, myObservedGames } from './store';
 	import { WebSocketHandler } from './classes/webSocketHandler';
 	import { WebServiceWrapper } from './classes/webServiceWrapper';
 	import GameBoard from './components/gameBoard.svelte';
@@ -12,6 +12,7 @@
 	import RunningGames from './components/runningGames.svelte';
 	import type { GameStatusMessage } from './classes/messages/gameStatus';
 	import { GameKeeper } from './classes/GameKeeper';
+	import { GameEventHandler } from './classes/eventHandler';
 
 	///*
 	const apiUrl = 'http://localhost:3000';
@@ -29,7 +30,9 @@
 
 	let socket: WebSocketHandler;
 	let webApiWrapper: WebServiceWrapper;
-	let myId = '';
+	let eventHandler: GameEventHandler;
+
+	let myUserKey = '';
 	const technicalNameRandom = 'default';
 	const defaultEntry:OptionSelect = {technicalName: technicalNameRandom, name: 'Random game', description: 'chose a random layout of the existing ones'}
 	let availableGameTypes = [defaultEntry];
@@ -43,13 +46,18 @@
 		webApiWrapper = new WebServiceWrapper(apiUrl);
 
 		const myIdSubscription = myWebsocketId.subscribe((value) => {
-			myId = value;
+			if(value) {
+				myUserKey = value;
+				eventHandler = new GameEventHandler(webApiWrapper, myUserKey, availableGameTypes)
+				webApiWrapper.getGameTypes();
+			}
 		});
 
 		const myAvailableTypesSubscription = availableTypes.subscribe((value) => {
 			if (value.length > 0) {
 				availableGameTypes = [defaultEntry];
 				Array.prototype.push.apply(availableGameTypes, value);
+				eventHandler.updateGameTypes(availableGameTypes);
 			}
 		});
 
@@ -70,89 +78,35 @@
 				availableGames = value;
 			};
 		})
-
-		webApiWrapper.getGameTypes();
-
 	});
 
-	async function startGame(event){
-		let startGameType = event.detail;
-		if (startGameType === technicalNameRandom && availableGameTypes.length > 0) {
-			startGameType = availableGameTypes[Math.floor(Math.random() * (availableGameTypes.length - 1)) +1].technicalName;
-		}
-		if (availableGameTypes.length > 0 ) {
-			webApiWrapper.startGame(myId, startGameType);
-		}
-		gameKeeper.removeFinishedGames();
+
+	// wanted to get rid of those wrapper functions,
+	// but calling "eventHandler.[EventFunction]" did
+	// not use the correct eventHandler object
+	function startGame(event) {
+		eventHandler.startGame(event)
 	}
 
-	async function subscribeGame(event) {
-		let gameId = 2;
-		if (event.type === 'observeGame') {
-			gameId = event.detail;
-		}
-		webApiWrapper.subscribeGame(myId, gameId);
-		gameKeeper.removeFinishedGames();
+	function subscribeGame(event) {
+		eventHandler.subscribeGame(event)
 	}
 
-	async function updateGame(event) {
-//		webApiWrapper.updateGame(currentGameId);
+	function revealCell(event) {
+		eventHandler.revealCell(event)
 	}
 
-	async function revealCell(event) {
-		let column = -1;
-		let row = -1;
-		let currentGameId = -1;
-		if (event.type === 'revealCell') {
-			column = event.detail.column;
-			row = event.detail.row;
-			currentGameId = event.detail.gameId;
-		} else {
-			const currentGameBoard = {getWidth: () => {return 8}, getHeight: () => { return 8;}};
-			column = Math.floor(Math.random() * currentGameBoard.getWidth())+1;
-			row = Math.floor(Math.random() * currentGameBoard.getHeight())+1;
-		}
-
-		webApiWrapper.revealCell(myId, currentGameId, column, row);
+	function revealSafeCell(event) {
+		eventHandler.revealSafeCell(event)
 	}
 
-	async function revealSafeCell(event) {
-		console.log('double click registered');
-		let column = -1;
-		let row = -1;
-		let currentGameId = -1;
-		if (event.type === 'revealSafeCell') {
-			currentGameId = event.detail.gameId;
-			column = event.detail.column;
-			row = event.detail.row;
-		}
-		if (column > -1 && row > -1){
-			webApiWrapper.revealSafeCell(myId, currentGameId, column, row);
-		}
+	function toggleMark(event) {
+		eventHandler.toggleMark(event)
 	}
 
-	async function getGameTypes() {
-		webApiWrapper.getGameTypes();
-	}
-
+	// simple (temporary) helper to reset games on server
 	async function resetGames() {
 		webApiWrapper.resetGames();
-	}
-
-	async function runningGames() {
-		webApiWrapper.getRunningTypes();
-	}
-
-	async function toggleMark(event) {
-		let column = -1;
-		let row = -1;
-		let currentGameId = -1;
-		if (event.type === 'toggleMark') {
-			currentGameId = event.detail.gameId;
-			column = event.detail.column;
-			row = event.detail.row;
-		}
-		webApiWrapper.toggleCell(myId, currentGameId, column, row);
 	}
 
 </script>
@@ -162,9 +116,6 @@
 	<div class="dummyButtons">
 		<button on:click={subscribeGame}>Subscribe</button>
 		<button on:click={revealCell}>reveal</button>
-		<button on:click={updateGame}>update</button>
-		<button on:click={runningGames}>running Games List</button>
-		<button on:click={getGameTypes}>gameTypes</button>
 		<button on:click={resetGames}>reset Games</button>
 	</div>
 <div class="body">
