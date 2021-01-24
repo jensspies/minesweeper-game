@@ -13,8 +13,8 @@ import Untouched from "./cellTypes/untouched.svelte";
 
     export let currentCell: any;
     export let gameWon: boolean;
-
     let additionalClass: string = '';
+
     const findComponent = () => {
         let component = Untouched;
         let newClass = '';
@@ -49,42 +49,44 @@ import Untouched from "./cellTypes/untouched.svelte";
 </script>
 
 <style>
-    div.cell {
-        width:30px;
-        height: 30px;
-        display: inline-block;
-        margin: 1px 1px 1px 2px;
-        border-radius: 5px;
-        background-color: lightgray;
-        -webkit-user-select: none;  /* Chrome all / Safari all */
-        -moz-user-select: none;     /* Firefox all */
-        -ms-user-select: none;      /* IE 10+ */
-        user-select: none;
+    .cell {
+        @apply h-5;
+        @apply w-5;
+        @apply m-0.5;
+        @apply text-xs;
+        @apply md:h-10;
+        @apply md:w-10;
+        @apply md:text-lg;
+        @apply select-none;
+        @apply bg-gray-400;
+        @apply rounded-md;
     }
+
     div.exploded {
-        background-color: red;
+        @apply bg-red-700;
     }
     div.dummy {
-        background-color: yellow;
+        @apply bg-yellow-400;
     }
 
     div.markedBomb {
-        background-color: orange;
+        @apply bg-yellow-600;
     }
 
     div.markedBomb.won {
-        background-color: green;
+        @apply bg-green-600;
     }
 
     div.revealed {
-        background-color: gray;
-        border: 1px solid;
-        margin:0px 0px 0px 1px;
-        border-color: white;
+        @apply bg-gray-500;
+        border-width: 1px;
+        @apply border-white;
+        @apply border-solid;
     }
+
 </style>
 
-    <div class="cell {additionalClass}"
+    <div class="cell border-white border-solid {additionalClass}"
         on:contextmenu|preventDefault="{() => dispatch('toggleMark', currentCell.coord)}"
         on:click="{() => dispatch('revealCell', currentCell.coord)}"
         on:dblclick="{() => dispatch('revealSafeCell', currentCell.coord)}"

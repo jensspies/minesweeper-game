@@ -16,7 +16,7 @@
     }
 
 </style>
-    <div class="boardRow">
+    <div class="select-none inline-flex flex-row gap-0.5">
         {#if currentRowCells}
             {#each currentRowCells as cell}
                 <GameBoardCell

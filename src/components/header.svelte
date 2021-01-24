@@ -1,4 +1,4 @@
 
-<div>
-    <h1>Welcome to Minesweeper clone</h1>
+<div class="container text-xl align-baseline text-center">
+    Welcome to Minesweeper clone
 </div>

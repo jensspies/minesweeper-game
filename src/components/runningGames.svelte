@@ -20,8 +20,6 @@ onMount(() => {
 </script>
 
 <div>
-
-    Hallo
     <ul>
         {#each observableGames as game}
         <li on:click="{() => dispatch('observeGame', game.gameId)}">[{game.gameId}] - {game.Name} ({game.desc}) </li>

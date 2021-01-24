@@ -30,14 +30,11 @@ import GameBoardRow from "./gameBoardRow.svelte";
 </script>
 
 <style>
-    div#gameboard {
-        text-align: center;
-    }
 
     div.gameBorder {
         display: inline-block;
         background-color: gray;
-        padding: 2px 4px 2px 3px;
+       padding: 2px 4px 2px 3px;
         border-radius: 5px;
         -webkit-user-select: none;  /* Chrome all / Safari all */
         -moz-user-select: none;     /* Firefox all */
@@ -46,14 +43,14 @@ import GameBoardRow from "./gameBoardRow.svelte";
     }
 
 </style>
-<div id='gameboard'>
+<div id='gameboard' class="">
     {#if myGameBoard}
         {#if myGameBoard.gameWon}
-            <p>YOU WON!!!</p>
+            <p class="text-center">YOU WON!!!</p>
         {:else}
-            <p>Marked {myGameBoard.getMarkedBombs()} of {myGameBoard.getTotalBombs()}</p>
+            <p class="text-center">Marked {myGameBoard.getMarkedBombs()} of {myGameBoard.getTotalBombs()}</p>
         {/if}
-        <div class="gameBorder">
+        <div class="bg-gray-500 inline-flex flex-col rounded-md select-none p-1 text-center">
             {#each myGameBoard.cellRows as cellRow}
                     <GameBoardRow
                     bind:gameWon={myGameBoard.gameWon}

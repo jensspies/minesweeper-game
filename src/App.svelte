@@ -38,7 +38,7 @@
 	let availableGameTypes = [defaultEntry];
 	let selectedGameType: string = undefined;
 
-	let availableGames: Array<GameStatusMessage> = [];
+	let availableGames: GameStatusMessage[] = [];
 	const gameKeeper: GameKeeper = new GameKeeper();
 
 	onMount(() => {
@@ -113,13 +113,13 @@
 
 <main>
 	<Heading/>
-	<div class="dummyButtons">
+	<div class="container text-lg align-baseline text-center">
 		<button on:click={subscribeGame}>Subscribe</button>
 		<button on:click={revealCell}>reveal</button>
 		<button on:click={resetGames}>reset Games</button>
 	</div>
-<div class="body">
-	<div class="sidebar">
+<div class="grid grid-cols-3">
+	<div class="col-span-1">
 		<GameTypeSelection
 			on:startGame="{startGame}"
 			options="{availableGameTypes}"
@@ -128,7 +128,7 @@
 
 		<RunningGames on:observeGame={subscribeGame}/>
 	</div>
-	<div class="game">
+	<div class="">
 		{#if availableGames && availableGames.length > 0}
 			{#each availableGames as nextGameBoard}
 					<GameBoard
@@ -142,36 +142,14 @@
 </div>
 </main>
 
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+<style global lang="postcss">
+	/* only apply purgecss on utilities, per Tailwind docs */
+	/* purgecss start ignore */
+  	@tailwind base;
+	@tailwind components;
+	/* purgecss end ignore */
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
+	@tailwind utilities;
 
-	div.body {
-		display: flex;
-	}
 
-	div.body .sidebar {
-		flex:2
-	}
-
-	div.body .game {
-		flex: 4;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
 </style>
