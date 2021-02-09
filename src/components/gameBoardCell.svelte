@@ -33,7 +33,7 @@ import Untouched from "./cellTypes/untouched.svelte";
                 break;
             case currentCell.mark === 1:
                 newClass = 'markedBomb';
-                if (gameWon) {newClass += ' won';}
+                if (gameWon) {newClass = newClass + ' won';}
                 component = MarkedBomb;
                 break;
             case currentCell.mark === 2:

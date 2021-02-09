@@ -1,5 +1,4 @@
-import { myWebsocketId, chatMessageQueue, myCurrentGameId, gameStatusMessageQueue, availableTypes, openGamesToObserveQueue } from '../store';
-import { getMessageTypes, Message, MessageType } from './message';
+import { Message, MessageType } from './message';
 import { ChatMessage } from './messages/chatMessage';
 import { GameIdMessage } from './messages/gameId';
 import { GameStatusMessage } from './messages/gameStatus';
@@ -12,35 +11,14 @@ export class MessageParser {
 
     };
 
-    parse(data: any) {
+    parse(data: any): any {
 
         const message: any = this.getMessageObject(data);
-        if(message) {
-            switch (message.getType()) {
-                case MessageType.WelcomeMessage:
-                    myWebsocketId.init(message);
-                    break;
-                case MessageType.ChatMessage:
-                    chatMessageQueue.add(message);
-                    break;
-                case MessageType.GameTypes:
-                    availableTypes.set(message.data);
-                    break;
-                case MessageType.GameId:
-                    myCurrentGameId.init(message);
-                    break;
-                case MessageType.GameStatus:
-                    gameStatusMessageQueue.add(message);
-                    break;
-                case MessageType.OpenGames:
-                    openGamesToObserveQueue.add(message);
-                    break;
-                }
-
-        } else if (Object.keys(data).length > 0) {
+        if(!message && Object.keys(data).length > 0) {
             console.log('MessageType not registered:');
             console.log(data);
         }
+        return message;
     }
 
     private getMessageObject(data): Message|undefined {

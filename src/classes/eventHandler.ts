@@ -19,7 +19,7 @@ export class GameEventHandler {
         this._availableGameTypes = availableGameTypes;
     }
 
-	public startGame(event){
+	public startGame = (event) => {
         let startGameType = event.detail;
 		if (startGameType === this._technicalNameRandom && this._availableGameTypes.length > 0) {
 			startGameType = this._availableGameTypes[Math.floor(Math.random() * (this._availableGameTypes.length - 1)) +1].technicalName;
@@ -29,7 +29,7 @@ export class GameEventHandler {
 		}
 	}
 
-	public subscribeGame(event) {
+	public subscribeGame = (event) => {
 		let gameId = 2;
 		if (event.type === 'observeGame') {
 			gameId = event.detail;
@@ -37,7 +37,7 @@ export class GameEventHandler {
 		this._webApi.subscribeGame(this._userKey, gameId);
 	}
 
-	public revealCell(event) {
+	public revealCell = (event) => {
 		let column = -1;
 		let row = -1;
 		let currentGameId = -1;
@@ -54,7 +54,7 @@ export class GameEventHandler {
 		this._webApi.revealCell(this._userKey, currentGameId, column, row);
 	}
 
-	public revealSafeCell(event) {
+	public revealSafeCell = (event) => {
 		let column = -1;
 		let row = -1;
 		let currentGameId = -1;
@@ -68,7 +68,7 @@ export class GameEventHandler {
 		}
 	}
 
-	public toggleMark(event) {
+	public toggleMark = (event) => {
 		let column = -1;
 		let row = -1;
 		let currentGameId = -1;

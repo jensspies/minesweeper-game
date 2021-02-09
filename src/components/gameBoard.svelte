@@ -50,7 +50,9 @@ import GameBoardRow from "./gameBoardRow.svelte";
         {:else}
             <p class="text-center">Marked {myGameBoard.getMarkedBombs()} of {myGameBoard.getTotalBombs()}</p>
         {/if}
-        <div class="bg-gray-500 inline-flex flex-col rounded-md select-none p-1 text-center">
+        <div
+            class="bg-gray-500 inline-flex flex-col rounded-md select-none p-1 text-center"
+            on:contextmenu|preventDefault="{() => {return;}}">
             {#each myGameBoard.cellRows as cellRow}
                     <GameBoardRow
                     bind:gameWon={myGameBoard.gameWon}

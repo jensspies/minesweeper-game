@@ -1,12 +1,12 @@
-import { MessageParser } from './messageParser';
+import { MessageHandler } from './messageHandler';
 
 export class WebServiceWrapper {
     private webApiUrl: string;
-    private messageParser: MessageParser;
+    private messageHandler: MessageHandler;
 
     constructor(serverUrl: string) {
         this.webApiUrl = serverUrl;
-        this.messageParser = new MessageParser();
+        this.messageHandler = new MessageHandler();
 
     };
 
@@ -50,7 +50,7 @@ export class WebServiceWrapper {
         return this.callApi(url);
     }
 
-    public resetGames() {
+    public resetGames = (event) => {
         const url = this._getResetGamesUrl();
         return this.callApi(url);
     }
@@ -62,7 +62,7 @@ export class WebServiceWrapper {
             return response.json();
         })
         .then(function(json) {
-            apiHandler.messageParser.parse(json);
+            apiHandler.messageHandler.handleMessage(json);
         })
         .catch((error) => {
             console.log(error);

@@ -14,18 +14,13 @@
 	import { GameKeeper } from './classes/GameKeeper';
 	import { GameEventHandler } from './classes/eventHandler';
 
-	///*
-	const apiUrl = 'http://localhost:3000';
-	const websocketServerUrl = 'ws:localhost:8181';
-	//*/
-	/*
-	const apiUrl = 'http://proxya.ddnss.org:3000';
-	const websocketServerUrl = 'ws:proxya.ddnss.org:8181';
-	//*/
-	/*
-	const apiUrl = 'http://192.168.178.47:3000';
-	const websocketServerUrl = 'ws:192.168.178.47:8181';
-	//*/
+	let host = '';
+	host = 'localhost';
+	//host = 'proxya.ddnss.org';
+	//host = '192.168.178.47';
+
+	const apiUrl = 'http://' + host + ':3000';
+	const websocketServerUrl = 'ws:' + host + ':8181';
 
 
 	let socket: WebSocketHandler;
@@ -80,62 +75,33 @@
 		})
 	});
 
-
-	// wanted to get rid of those wrapper functions,
-	// but calling "eventHandler.[EventFunction]" did
-	// not use the correct eventHandler object
-	function startGame(event) {
-		eventHandler.startGame(event)
-	}
-
-	function subscribeGame(event) {
-		eventHandler.subscribeGame(event)
-	}
-
-	function revealCell(event) {
-		eventHandler.revealCell(event)
-	}
-
-	function revealSafeCell(event) {
-		eventHandler.revealSafeCell(event)
-	}
-
-	function toggleMark(event) {
-		eventHandler.toggleMark(event)
-	}
-
-	// simple (temporary) helper to reset games on server
-	async function resetGames() {
-		webApiWrapper.resetGames();
-	}
-
 </script>
 
 <main>
 	<Heading/>
 	<div class="container text-lg align-baseline text-center">
-		<button on:click={subscribeGame}>Subscribe</button>
-		<button on:click={revealCell}>reveal</button>
-		<button on:click={resetGames}>reset Games</button>
+		<button on:click={eventHandler.subscribeGame}>Subscribe</button>
+		<button on:click={eventHandler.revealCell}>reveal</button>
+		<button on:click={webApiWrapper.resetGames}>reset Games</button>
 	</div>
 <div class="grid grid-cols-3">
 	<div class="col-span-1">
 		<GameTypeSelection
-			on:startGame="{startGame}"
+			on:startGame="{eventHandler.startGame}"
 			options="{availableGameTypes}"
 			selected="{selectedGameType}"
 			/>
 
-		<RunningGames on:observeGame={subscribeGame}/>
+		<RunningGames on:observeGame={eventHandler.subscribeGame}/>
 	</div>
 	<div class="">
 		{#if availableGames && availableGames.length > 0}
 			{#each availableGames as nextGameBoard}
 					<GameBoard
 						bind:myGameBoard="{nextGameBoard}"
-						on:revealCell="{revealCell}"
-						on:toggleMark="{toggleMark}"
-						on:revealSafeCell="{revealSafeCell}"/>
+						on:revealCell="{eventHandler.revealCell}"
+						on:toggleMark="{eventHandler.toggleMark}"
+						on:revealSafeCell="{eventHandler.revealSafeCell}"/>
 			{/each}
 		{/if}
 	</div>

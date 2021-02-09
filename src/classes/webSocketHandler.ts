@@ -1,11 +1,11 @@
-import { MessageParser } from './messageParser';
+import { MessageHandler } from './messageHandler';
 
 export class WebSocketHandler {
     private webSocket: WebSocket;
-    private messageParser: MessageParser;
+    private messageHandler: MessageHandler;
     constructor(serverUrl: string) {
         this.webSocket = new WebSocket(serverUrl);
-        this.messageParser = new MessageParser();
+        this.messageHandler = new MessageHandler();
         this._registerEvents();
 
     };
@@ -20,7 +20,7 @@ export class WebSocketHandler {
                 console.log('no JSON data given!!')
                 data.message = event.data;
             }
-            socketHandler.messageParser.parse(data);
+            socketHandler.messageHandler.handleMessage(data);
 		});
     }
 }

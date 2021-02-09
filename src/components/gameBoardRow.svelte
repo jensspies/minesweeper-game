@@ -16,7 +16,10 @@
     }
 
 </style>
-    <div class="select-none inline-flex flex-row gap-0.5">
+    <div
+        class="select-none inline-flex flex-row gap-0.5"
+        on:contextmenu|preventDefault="{() => {return;}}"
+        >
         {#if currentRowCells}
             {#each currentRowCells as cell}
                 <GameBoardCell
